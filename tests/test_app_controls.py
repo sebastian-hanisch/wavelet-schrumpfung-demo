@@ -77,7 +77,7 @@ def test_permalink_is_applied_and_invalid_values_are_ignored():
 
 def test_preset_button_sets_the_widgets():
     at = _run()
-    at.button(key="preset_Cycle Spinning: Gibbs-Artefakte verschwinden").click().run(timeout=TIMEOUT)
+    at.button(key="preset_Cycle Spinning: der Fehler halbiert sich").click().run(timeout=TIMEOUT)
     assert not at.exception
     assert at.selectbox(key="signal_select").value == "HeaviSine" and at.radio(key="rule_select").value == "hart" and at.radio(key="cycle_select").value == "an"
     at.button(key="preset_Niedriger Rauschabstand: die Schwelle zählt").click().run(timeout=TIMEOUT)

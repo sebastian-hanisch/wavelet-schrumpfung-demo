@@ -1,4 +1,4 @@
-"""Wavelet-Schrumpfung: Schwellwerte entscheiden – die universale Schwelle ist zu vorsichtig, SURE und Cycle Spinning helfen - interaktive Konzept-Demo
+"""Wavelet-Schrumpfung: Schwellwerte entscheiden – bei Rauschabstand 7 ist die universale Schwelle zu hoch, SURE und Cycle Spinning senken den Fehler - interaktive Konzept-Demo
 Sebastian Hanisch - Operations Research und Machine Learning
 
 Stück 13 der Reihe „Spektral- und Wavelet-Analyse“. Die vier Testsignale von Donoho und Johnstone (Blocks, Bumps, HeaviSine, Doppler) werden verrauscht und per Wavelet-Schrumpfung entrauscht
@@ -58,7 +58,7 @@ st.markdown(
 Wavelet-Schrumpfung entrauscht in drei Schritten: Die Reihe wird mit der **DWT** zerlegt, die Detailkoeffizienten werden mit einer **Schwelle** geschrumpft (klein gleich Rauschen, groß gleich Signal), und die Rücktransformation
 liefert die Schätzung. Das funktioniert, weil glatte Signale und Sprünge in der Wavelet-Basis **dünn** sind: Wenige große Koeffizienten tragen das Signal, das Rauschen verteilt sich gleichmäßig auf alle. Die **weiche** Schwelle
 zieht große Koeffizienten um $\\lambda$ herunter, die **harte** lässt sie unverändert. Die Frage ist die Höhe der Schwelle: die **universale** $\\sigma\\sqrt{2\\ln n}$, **SURE** (aus den Daten je Stufe) oder ein Hybrid.
-**Cycle Spinning** mittelt über Verschiebungen und beseitigt die Verschiebungsvarianz der DWT.
+**Cycle Spinning** mittelt über Verschiebungen und gleicht die Verschiebungsvarianz der DWT aus.
 
 Dies ist die dreizehnte Demo der Reihe „Spektral- und Wavelet-Analyse“, auf die **diskrete Wavelet-Transformation** aufbauend (die Koeffizienten, ihre Sparsität und die Verschiebungsvarianz). Alles ist **simuliert**: Signal und
 Rauschen sind bekannt, der Fehler wird gegen die Wahrheit gemessen. Weiter unten: **🔬 Experimente**, **🚧 Wo die Annahmen enden** und **📐 Mathematische Formulierung**.
@@ -130,9 +130,9 @@ m3.metric("Behaltene Koeffizienten", f"{a.kept} von {a.total}", delta=f"{de(100 
 m4.metric("Rauschpegel σ", de(a.sigma, 3), delta=f"universale Schwelle {de(a.universal, 2)}", delta_color="off", help="Verwendeter Pegel (MAD der Stufe 1 oder bekannt) und die daraus folgende universale Schwelle σ√(2 ln n).")
 st.plotly_chart(build_signals(a), width="stretch", key="signals")
 st.plotly_chart(build_error(a), width="stretch", key="error")
-st.caption("Fehler der Schätzung (grün) gegen das Rauschen (grau): Die Schwelle nimmt das Rauschen weg und lässt an den Sprüngen und Spitzen Abweichungen zurück (Gibbs-Artefakte der DWT, bei harter Schwelle und ohne Cycle Spinning am stärksten).")
+st.caption("Fehler der Schätzung (grün) gegen das Rauschen (grau): Die Schwelle nimmt das Rauschen weg und lässt an den Sprüngen und Spitzen Abweichungen zurück (Gibbs-Artefakte der DWT; Cycle Spinning verkleinert sie).")
 st.plotly_chart(build_coefficients(a), width="stretch", key="coefficients")
-st.caption("Beträge der Detailkoeffizienten je Stufe vor und nach der Schwelle (dB gegen den größten Betrag); ein Koeffizient der Stufe j gilt für 2^j Abtastwerte. Wenige große Koeffizienten bleiben.")
+st.caption("Beträge der Detailkoeffizienten je Stufe vor und nach der Schwelle (dB gegen den größten Betrag); die Koeffizienten der Stufe j liegen im Abstand von 2^j Abtastwerten (ihr Träger ist länger). Wenige große Koeffizienten bleiben.")
 st.plotly_chart(build_sorted(a), width="stretch", key="sorted")
 st.caption("Alle Detailkoeffizienten nach Größe geordnet: Das Signal sitzt in wenigen großen, das Rauschen im flachen Rest; die universale Schwelle liegt am oberen Ende des Rauschens.")
 st.plotly_chart(build_thresholds(a), width="stretch", key="thresholds")
@@ -220,10 +220,10 @@ st.markdown(
 | Annahme | Was passiert, wenn sie verletzt ist | Wer setzt an |
 |---|---|---|
 | **Die universale Schwelle ist das Richtige** | Sie ist auf „kein Rauschen bleibt übrig“ gebaut, nicht auf kleinen Fehler: Bei Rauschabstand 7 liegt der Fehler der weichen universalen Schwelle bei Blocks und Bumps über dem des verrauschten Signals. | SURE, Hybrid, Minimax-Schwellen |
-| **Das Rauschen ist weiß mit bekanntem σ** | Der Pegel aus der Stufe 1 ist bei Sprüngen 5 bis 6 % zu hoch; farbiges Rauschen braucht eine Schwelle je Stufe. | stufenabhängiges σ_j |
-| **Die DWT ist verschiebungsinvariant** | Die Schwelle auf der DWT hängt von der Lage der Sprünge ab und erzeugt Gibbs-Artefakte; Cycle Spinning mittelt das heraus. | Cycle Spinning, MODWT |
+| **Das Rauschen ist weiß mit bekanntem σ** | Der Pegel aus der Stufe 1 ist bei Blocks und Bumps 5 bis 6 % zu hoch, bei HeaviSine nicht; farbiges Rauschen braucht eine Schwelle je Stufe. | stufenabhängiges σ_j |
+| **Die DWT ist verschiebungsinvariant** | Die Schwelle auf der DWT hängt von der Lage der Sprünge ab (Artefakte am Sprung); Cycle Spinning mildert das (Fehler bei harter Schwelle etwa halbiert, Spitzenfehler am Sprung um bis zu einem Drittel kleiner). | Cycle Spinning, MODWT |
 | **Die Reihe ist periodisch** | Die periodische Fortsetzung macht Randsprünge; Blocks hat einen. | Spiegeln (nicht gebaut) |
-| **Das Signal ist dünn in der Wavelet-Basis** | Glatte Schwingungen sind in Fourier dünner als in Wavelets (HeaviSine: 9 gegen 12 Koeffizienten für 99 % der Energie). | Basiswahl, Wavelet-Pakete |
+| **Das Signal ist dünn in der Wavelet-Basis** | Beim Signal HeaviSine braucht Fourier für 99 % der Energie weniger Koeffizienten als D8 (9 gegen 12); bei Doppler, einer glatten Schwingung, ist es umgekehrt (175 gegen 40). | Basiswahl, Wavelet-Pakete |
 | **Ein Fehlermaß für alles** | Der Fehler ist die mittlere quadratische Abweichung; visuelle Güte (Artefakte) ist davon nicht gedeckt. | – |
 """,
 )
@@ -237,7 +237,7 @@ with st.expander("📐 Mathematische Formulierung"):
 
 **Schwellen.** $\eta_S(d, \lambda) = \operatorname{sign}(d)(|d| - \lambda)_+$ (weich) und $\eta_H(d, \lambda) = d\,\mathbf 1\{|d| > \lambda\}$ (hart); die Schätzung ist $\hat f = W^{\mathsf T}\,\eta(Wy, \lambda)$ (nur auf den Details).
 
-**Universale Schwelle.** $\lambda_U = \sigma\sqrt{2\ln n}$: Mit großer Wahrscheinlichkeit übersteigt kein Rauschkoeffizient die Schwelle (bei reinem Rauschen etwa $1 - 1/\sqrt{\pi \ln n}$); das Risiko ist bis auf einen Faktor $2\ln n + 1$ minimax.
+**Universale Schwelle.** $\lambda_U = \sigma\sqrt{2\ln n}$: Mit großer Wahrscheinlichkeit übersteigt kein Rauschkoeffizient die Schwelle (bei reinem Rauschen etwa $1 - 1/\sqrt{\pi \ln n}$); das Risiko liegt höchstens um den Faktor $2\ln n + 1$ über dem idealen Risiko (damit nahe am Minimax).
 
 **SURE.** Für Koeffizienten $z_i = d_i/\sigma$ mit Rauschvarianz 1 ist $\mathrm{SURE}(\lambda) = m - 2\,\#\{|z_i| \le \lambda\} + \sum_i \min(|z_i|, \lambda)^2$ ein unverzerrter Schätzer des Risikos der weichen Schwelle (Stein 1981).
 SureShrink minimiert ihn je Stufe über $\lambda \in \{0\} \cup \{|z_i|\}$, $\lambda \le \sqrt{2\ln m}$; der **Hybrid** nimmt $\lambda_U$ bei Stufen mit $\frac1m\sum(z_i^2 - 1) \le (\log_2 m)^{3/2}/\sqrt m$.

@@ -46,7 +46,7 @@ PRESETS = {
                                                                    "cycle": "aus", "seed": DEFAULT_SEED},
     "SURE auf Blocks: der Fehler sinkt auf ein Drittel": {"n": 1024, "signal": "Blocks", "snr": 7.0, "p": 4, "levels": 6, "method": "SURE", "rule": "weich", "fixed": 1.0, "sigma": "geschätzt (MAD)", "cycle": "aus",
                                                          "seed": DEFAULT_SEED},
-    "Cycle Spinning: Gibbs-Artefakte verschwinden": {"n": 1024, "signal": "HeaviSine", "snr": 7.0, "p": 4, "levels": 6, "method": "universal", "rule": "hart", "fixed": 1.0, "sigma": "geschätzt (MAD)", "cycle": "an",
+    "Cycle Spinning: der Fehler halbiert sich": {"n": 1024, "signal": "HeaviSine", "snr": 7.0, "p": 4, "levels": 6, "method": "universal", "rule": "hart", "fixed": 1.0, "sigma": "geschätzt (MAD)", "cycle": "an",
                                                     "seed": DEFAULT_SEED},
     "HeaviSine: wenige Koeffizienten tragen alles": {"n": 1024, "signal": "HeaviSine", "snr": 7.0, "p": 4, "levels": 6, "method": "universal", "rule": "hart", "fixed": 1.0, "sigma": "geschätzt (MAD)", "cycle": "aus",
                                                     "seed": DEFAULT_SEED},
@@ -56,7 +56,7 @@ PRESETS = {
 PRESET_HELP = {
     "Universale Schwelle auf Blocks: schlechter als das Rauschen": "Blocks, Signal-Rausch-Verhältnis 7, D8: Die weiche universale Schwelle σ√(2 ln n) = 3,7σ verzerrt die vielen großen Koeffizienten; der Fehler liegt über dem des verrauschten Signals.",
     "SURE auf Blocks: der Fehler sinkt auf ein Drittel": "Dieselbe Messung mit SURE je Stufe: Die Schwelle wird je Stufe aus den Daten gewählt, der Fehler sinkt auf etwa ein Drittel des verrauschten.",
-    "Cycle Spinning: Gibbs-Artefakte verschwinden": "HeaviSine mit harter universaler Schwelle und Cycle Spinning: Das Mitteln über 64 Verschiebungen halbiert den Fehler und glättet das Überschwingen an den Sprüngen; schalten Sie es aus, um den Unterschied zu sehen.",
+    "Cycle Spinning: der Fehler halbiert sich": "HeaviSine mit harter universaler Schwelle und Cycle Spinning: Das Mitteln über 64 Verschiebungen halbiert den Fehler und verkleinert das Überschwingen an den Sprüngen (der größte Fehler am Sprung sinkt weniger); schalten Sie es aus, um den Unterschied zu sehen.",
     "HeaviSine: wenige Koeffizienten tragen alles": "HeaviSine ist glatt mit zwei Sprüngen: Nach der harten Schwelle bleiben nur 8 der 1008 Detailkoeffizienten übrig.",
     "Niedriger Rauschabstand: die Schwelle zählt": "Doppler bei Signal-Rausch-Verhältnis 1 (Rauschen so stark wie das Signal): Alle Verfahren sind weit besser als ohne Schwelle; die weiche universale Schwelle (0,16) liegt aber noch hinter SURE und der harten Schwelle (je etwa 0,10).",
 }

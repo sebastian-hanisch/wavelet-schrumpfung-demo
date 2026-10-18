@@ -44,7 +44,7 @@ def test_preset_sure_reduces_the_error_to_about_a_third():
 
 
 def test_preset_cycle_spinning_halves_the_error():
-    name = "Cycle Spinning: Gibbs-Artefakte verschwinden"
+    name = "Cycle Spinning: der Fehler halbiert sich"
     on, off = preset(name), preset(name, cycle="aus")
     assert 0.4 < on.mse_est / off.mse_est < 0.55 and "halbiert den Fehler" in C.PRESET_HELP[name] and "64 Verschiebungen" in C.PRESET_HELP[name] and C.MAX_SHIFTS == 64 and 2 ** on.settings.levels == 64
 
@@ -62,7 +62,7 @@ def test_preset_low_snr_methods_are_far_better_than_no_threshold_and_sure_beats_
     hard = preset(name, rule="hart")
     assert de(uni.mse_est, 2) == "0,16" and de(sure.mse_est, 2) == "0,10" and de(hard.mse_est, 2) == "0,11" and uni.mse_est < 0.2 * uni.mse_noisy
     assert "(0,16)" in C.PRESET_HELP[name] and "je etwa 0,10" in C.PRESET_HELP[name] and "Rauschen so stark wie das Signal" in C.PRESET_HELP[name] and uni.settings.snr == 1.0
-    assert "Doppler bei Rauschabstand 1: 0,157 gegen 0,955 ohne Schwelle" in README and de(uni.mse_est) == "0,157" and de(uni.mse_noisy) == "0,955"
+    assert "Doppler bei Rauschabstand 1, ein Lauf mit Seed 39: 0,157 gegen 0,955 ohne Schwelle" in README and de(uni.mse_est) == "0,157" and de(uni.mse_noisy) == "0,955"
 
 
 # --- Schwellenverfahren, Kurve ----------------------------------------------------------------------------------------------------------------
@@ -77,15 +77,15 @@ def test_method_numbers_in_the_readme():
         assert " / ".join(de(r[k]) for k in ("noisy", "universal_soft", "universal_hard", "sure", "hybrid", "oracle")) == line and f"{name} {line}" in README
         assert r["sure"] < r["oracle"] and r["sure"] < r["universal_hard"]
     assert rows["Blocks"]["universal_soft"] > rows["Blocks"]["noisy"] and rows["Bumps"]["universal_soft"] > rows["Bumps"]["noisy"] and "verschlechtert Blocks und Bumps sogar" in README
-    assert "schlägt auf allen vier Signalen das Orakel" in README and (C.EXP_N, C.EXP_SNR, C.EXP_P, C.EXP_J, C.EXP_METHOD_RUNS) == (1024, 7.0, 4, 6, 100) and "100 Läufe bei den Schwellenverfahren" in README
+    assert "unter dem Orakel mit der besten gemeinsamen Schwelle" in README and (C.EXP_N, C.EXP_SNR, C.EXP_P, C.EXP_J, C.EXP_METHOD_RUNS) == (1024, 7.0, 4, 6, 100) and "100 Läufe bei den Schwellenverfahren" in README
 
 
 def test_curve_numbers_in_the_readme():
     rows = {r["signal"]: r for r in get("curve")}
     assert " / ".join(de(rows[k]["best_error"]) for k in SG.NAMES) == "0,414 / 0,443 / 0,111 / 0,268" and "mit den Fehlern 0,414 / 0,443 / 0,111 / 0,268" in README
     assert " / ".join(de(rows[k]["universal_error"]) for k in SG.NAMES) == "1,586 / 1,897 / 0,186 / 0,750" and "sind es 1,586 / 1,897 / 0,186 / 0,750" in README
-    assert [rows[k]["best_lam"] for k in SG.NAMES] == [1.0, 1.0, 1.8, 1.4] and "bei 1,0 (Blocks), 1,0 (Bumps), 1,8 (HeaviSine) und 1,4 (Doppler)" in README and rows["Blocks"]["universal_lam"] == 3.8 and "universalen Schwelle 3,8" in README
-    assert min(r["error_zero"] for r in rows.values()) > 0.99 and max(r["error_zero"] for r in rows.values()) < 1.006 and "das Rauschen (0,999 bis 1,005)" in README and C.EXP_CURVE_RUNS == 60
+    assert [rows[k]["best_lam"] for k in SG.NAMES] == [1.0, 1.0, 1.8, 1.4] and "bei 1,0 (Blocks), 1,0 (Bumps), 1,8 (HeaviSine) und 1,4 (Doppler)" in README and rows["Blocks"]["universal_lam"] == 3.8 and "nächster Gitterpunkt 3,8" in README and "3,72, nächster" in README and abs(float(S.universal_threshold(1.0, 1024)) - 3.72) < 0.005
+    assert de(min(r["error_zero"] for r in rows.values())) == "0,997" and de(max(r["error_zero"] for r in rows.values())) == "1,005" and "das Rauschen (0,997 bis 1,005)" in README and C.EXP_CURVE_RUNS == 60
     assert "60 bei der Fehlerkurve" in README and de(rows["Blocks"]["error_zero"]) == "0,999" and de(rows["Doppler"]["error_zero"]) == "1,005"
 
 
@@ -117,7 +117,7 @@ def test_nterm_numbers_in_the_readme():
     assert " / ".join(de(v) for v in b["d8"]) == "0,496 / 0,352 / 0,197 / 0,111 / 0,031" and "D8 0,496 / 0,352 / 0,197 / 0,111 / 0,031" in README
     assert " / ".join(de(v) for v in b["fourier"]) == "0,421 / 0,354 / 0,252 / 0,166 / 0,116" and "Fourier 0,421 / 0,354 / 0,252 / 0,166 / 0,116" in README and C.EXP_KS == (8, 16, 32, 64, 128)
     assert [(rows[k]["count_d8"], rows[k]["count_fourier"]) for k in SG.NAMES] == [(70, 168), (107, 410), (12, 9), (40, 175)] and "Blocks 70 / 168, Bumps 107 / 410, HeaviSine 12 / 9, Doppler 40 / 175" in README
-    assert rows["HeaviSine"]["count_fourier"] < rows["HeaviSine"]["count_d8"] and "9 gegen 12" in APP and "Nur das glatte HeaviSine ist in Fourier dünner" in README
+    assert rows["HeaviSine"]["count_fourier"] < rows["HeaviSine"]["count_d8"] and "9 gegen 12" in APP and "ist nur HeaviSine in Fourier dünner (9 gegen 12)" in README
 
 
 # --- Rauschpegel -----------------------------------------------------------------------------------------------------------------------------------
@@ -133,7 +133,7 @@ def test_noise_numbers_in_the_readme_and_the_app():
     assert " / ".join(de(wrong[f], 2) for f in (0.5, 0.75, 1.0, 1.5, 2.0)) == "0,58 / 1,01 / 1,53 / 2,73 / 3,94" and "0,58 / 1,01 / 1,53 / 2,73 / 3,94" in README
     zero = {r["n"]: r for r in res["zero"]}
     assert " / ".join(de(100 * zero[n]["share"], 1) for n in (256, 1024, 4096)) == "81,3 / 82,7 / 81,7" and " / ".join(de(100 * zero[n]["theory"], 1) for n in (256, 1024, 4096)) == "76,0 / 78,6 / 80,4"
-    assert "81,3 / 82,7 / 81,7 % der Läufe (n = 256 / 1024 / 4096; Näherung 76,0 / 78,6 / 80,4 %)" in README and (C.EXP_NOISE_RUNS, C.EXP_ZERO_RUNS) == (200, 300) and "200 beim Rauschpegel" in README
+    assert "81,3 / 82,7 / 81,7 % der Läufe (n = 256 / 1024 / 4096; Näherung 76,0 / 78,6 / 80,4 %; 300 Läufe, Standardfehler etwa 2 Punkte" in README and (C.EXP_NOISE_RUNS, C.EXP_ZERO_RUNS) == (200, 300) and "200 beim Rauschpegel" in README
 
 
 def test_sure_is_unbiased_claim():

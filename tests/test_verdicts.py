@@ -34,7 +34,7 @@ def test_verdict_methods_text():
     kind, text = ev.verdict_methods(rows)
     assert kind == "warning"
     assert text == ("Bei Blocks liegt der Fehler der weichen universalen Schwelle bei 1,66 gegen 1,01 des verrauschten Signals, SURE bei 0,36, die harte universale Schwelle bei 0,52; "
-                    "SURE (0,36) schlägt sogar die beste globale Schwelle (0,42). **Die universale Schwelle ist hier zu vorsichtig, und ein Verfahren, das je Stufe wählt, gewinnt.**")
+                    "SURE (0,36) schlägt sogar die beste globale Schwelle (0,42). **Bei Rauschabstand 7 ist die universale Schwelle zu hoch, und SURE, das je Stufe wählt, liegt unter dem Orakel mit einer gemeinsamen Schwelle.**")
 
 
 def test_verdict_curve_text():
@@ -53,7 +53,7 @@ def test_verdict_cycle_text():
     kind, text = ev.verdict_cycle(rows)
     assert kind == "info"
     assert text == ("Cycle Spinning senkt den Fehler der harten universalen Schwelle mit D8: Blocks 0,52 → 0,23, HeaviSine 0,13 → 0,06, Doppler 0,25 → 0,12. Bei Haar (Blocks) fällt er von 0,10 auf 0,05. "
-                    "**Mitteln über die Verschiebungen macht die Schwelle verschiebungsinvariant und halbiert den Fehler.**")
+                    "**Mitteln über die Verschiebungen halbiert bei harter Schwelle den Fehler (bei weicher Schwelle sinkt er weniger).**")
 
 
 def test_verdict_nterm_text():
@@ -61,8 +61,8 @@ def test_verdict_nterm_text():
             {"signal": "Doppler", "count_d8": 40, "count_fourier": 175}]
     kind, text = ev.verdict_nterm(rows)
     assert kind == "info"
-    assert text == ("Für 99 % der Energie braucht die beste Näherung bei Blocks 70 Koeffizienten in der D8-Basis gegen 168 in Fourier, bei Bumps 107 gegen 410, bei Doppler 40 gegen 175; nur das glatte HeaviSine braucht in Fourier "
-                    "weniger (9 gegen 12). **Wavelets sind die dünnere Basis für Sprünge und Spitzen, Fourier für glatte Schwingungen.**")
+    assert text == ("Für 99 % der Energie braucht die beste Näherung bei Blocks 70 Koeffizienten in der D8-Basis gegen 168 in Fourier, bei Bumps 107 gegen 410, bei Doppler 40 gegen 175; nur HeaviSine braucht in Fourier "
+                    "weniger (9 gegen 12). **Beim 99-%-Kriterium sind Wavelets bei Blocks, Bumps und Doppler die dünnere Basis, Fourier nur bei HeaviSine.**")
 
 
 def test_verdict_noise_text():
@@ -70,5 +70,5 @@ def test_verdict_noise_text():
            "wrong": [{"factor": 0.5, "error": 0.58}, {"factor": 1.0, "error": 1.53}]}
     kind, text = ev.verdict_noise(res)
     assert kind == "warning"
-    assert text == ("Der Rauschpegel aus dem Median der Stufe 1 ist bei Blocks 1,051 ± 0,060 und bei HeaviSine 1,002 ± 0,050 (wahr 1): Sprünge verfälschen ihn nach oben. Bei reinem Rauschen nullt die universale Schwelle alle Details in "
+    assert text == ("Der Rauschpegel aus dem Median der Stufe 1 ist bei Blocks 1,051 ± 0,060 und bei HeaviSine 1,002 ± 0,050 (wahr 1): Bei Blocks ist er zu hoch, bei HeaviSine nicht. Bei reinem Rauschen nullt die universale Schwelle alle Details in "
                     "81 bis 83 % der Läufe. Mit einem halb so großen σ sinkt der Fehler bei Blocks von 1,53 auf 0,58. **Der Pegel und die Schwelle hängen zusammen; ein falscher Pegel verschiebt beide.**")

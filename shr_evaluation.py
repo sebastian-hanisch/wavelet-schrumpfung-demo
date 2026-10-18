@@ -197,8 +197,8 @@ def verdict_methods(rows: list[dict]) -> tuple[str, str]:
     by = {r["signal"]: r for r in rows}
     b = by["Blocks"]
     return "warning", (f"Bei Blocks liegt der Fehler der weichen universalen Schwelle bei {de(b['universal_soft'], 2)} gegen {de(b['noisy'], 2)} des verrauschten Signals, SURE bei {de(b['sure'], 2)}, die harte "
-                       f"universale Schwelle bei {de(b['universal_hard'], 2)}; SURE ({de(b['sure'], 2)}) schlägt sogar die beste globale Schwelle ({de(b['oracle'], 2)}). **Die universale Schwelle ist hier zu vorsichtig, "
-                       "und ein Verfahren, das je Stufe wählt, gewinnt.**")
+                       f"universale Schwelle bei {de(b['universal_hard'], 2)}; SURE ({de(b['sure'], 2)}) schlägt sogar die beste globale Schwelle ({de(b['oracle'], 2)}). **Bei Rauschabstand 7 ist die universale Schwelle zu hoch, "
+                       "und SURE, das je Stufe wählt, liegt unter dem Orakel mit einer gemeinsamen Schwelle.**")
 
 
 def verdict_curve(rows: list[dict]) -> tuple[str, str]:
@@ -214,14 +214,14 @@ def verdict_cycle(rows: list[dict]) -> tuple[str, str]:
         return [r for r in rows if r["p"] == p and r["signal"] == name and r["rule"] == rule][0]
     parts = [f"{name} {de(at(4, name, 'hart')['plain'], 2)} → {de(at(4, name, 'hart')['cycle'], 2)}" for name in ("Blocks", "HeaviSine", "Doppler")]
     return "info", ("Cycle Spinning senkt den Fehler der harten universalen Schwelle mit D8: " + ", ".join(parts) + f". Bei Haar (Blocks) fällt er von {de(at(1, 'Blocks', 'hart')['plain'], 2)} auf "
-                    f"{de(at(1, 'Blocks', 'hart')['cycle'], 2)}. **Mitteln über die Verschiebungen macht die Schwelle verschiebungsinvariant und halbiert den Fehler.**")
+                    f"{de(at(1, 'Blocks', 'hart')['cycle'], 2)}. **Mitteln über die Verschiebungen halbiert bei harter Schwelle den Fehler (bei weicher Schwelle sinkt er weniger).**")
 
 
 def verdict_nterm(rows: list[dict]) -> tuple[str, str]:
     by = {r["signal"]: r for r in rows}
     return "info", (f"Für 99 % der Energie braucht die beste Näherung bei Blocks {by['Blocks']['count_d8']} Koeffizienten in der D8-Basis gegen {by['Blocks']['count_fourier']} in Fourier, bei Bumps "
-                    f"{by['Bumps']['count_d8']} gegen {by['Bumps']['count_fourier']}, bei Doppler {by['Doppler']['count_d8']} gegen {by['Doppler']['count_fourier']}; nur das glatte HeaviSine braucht in Fourier "
-                    f"weniger ({by['HeaviSine']['count_fourier']} gegen {by['HeaviSine']['count_d8']}). **Wavelets sind die dünnere Basis für Sprünge und Spitzen, Fourier für glatte Schwingungen.**")
+                    f"{by['Bumps']['count_d8']} gegen {by['Bumps']['count_fourier']}, bei Doppler {by['Doppler']['count_d8']} gegen {by['Doppler']['count_fourier']}; nur HeaviSine braucht in Fourier "
+                    f"weniger ({by['HeaviSine']['count_fourier']} gegen {by['HeaviSine']['count_d8']}). **Beim 99-%-Kriterium sind Wavelets bei Blocks, Bumps und Doppler die dünnere Basis, Fourier nur bei HeaviSine.**")
 
 
 def verdict_noise(res: dict) -> tuple[str, str]:
@@ -229,6 +229,6 @@ def verdict_noise(res: dict) -> tuple[str, str]:
     z = res["zero"]
     wrong = {r["factor"]: r["error"] for r in res["wrong"]}
     return "warning", (f"Der Rauschpegel aus dem Median der Stufe 1 ist bei Blocks {de(sig['Blocks']['mean'], 3)} ± {de(sig['Blocks']['sd'], 3)} und bei HeaviSine {de(sig['HeaviSine']['mean'], 3)} ± "
-                       f"{de(sig['HeaviSine']['sd'], 3)} (wahr 1): Sprünge verfälschen ihn nach oben. Bei reinem Rauschen nullt die universale Schwelle alle Details in {de(100 * z[0]['share'], 0)} bis "
+                       f"{de(sig['HeaviSine']['sd'], 3)} (wahr 1): Bei Blocks ist er zu hoch, bei HeaviSine nicht. Bei reinem Rauschen nullt die universale Schwelle alle Details in {de(100 * z[0]['share'], 0)} bis "
                        f"{de(100 * max(r['share'] for r in z), 0)} % der Läufe. Mit einem halb so großen σ sinkt der Fehler bei Blocks von {de(wrong[1.0], 2)} auf {de(wrong[0.5], 2)}. "
                        "**Der Pegel und die Schwelle hängen zusammen; ein falscher Pegel verschiebt beide.**")
