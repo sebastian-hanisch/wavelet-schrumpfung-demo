@@ -1,7 +1,6 @@
 # Wavelet-Schrumpfung: Schwellwerte entscheiden – bei Rauschabstand 7 ist die universale Schwelle zu hoch, SURE und Cycle Spinning senken den Fehler – Streamlit-Demo
 
-<!-- TODO nach dem Deploy: direkt hierher den Live-Link setzen (Leerzeile davor und danach):
-**[→ Demo live ausprobieren](https://sebastianhanisch-wavelet-schrumpfung-demo.streamlit.app/)** -->
+**[→ Demo live ausprobieren](https://sebastianhanisch-wavelet-schrumpfung-demo.streamlit.app/)**
 
 Dreizehnte Demo der Reihe **Spektral- und Wavelet-Analyse** in der „Konzepte“-Reihe für die Website „Sebastian Hanisch – Operations Research und Machine Learning“, aufbauend auf der Demo zu den **diskreten Wavelets**. Die vier
 Testsignale von Donoho und Johnstone (Blocks, Bumps, HeaviSine, Doppler) werden verrauscht und per **Wavelet-Schrumpfung** entrauscht: DWT, Schwelle auf den Detailkoeffizienten, Rücktransformation. Gemessen werden die
@@ -109,4 +108,4 @@ Gebaut mit Streamlit, Plotly, NumPy, pandas und fpdf2.
 
 ---
 
-Diese Demo ist Teil des Portfolios von [Sebastian Hanisch](https://sebastianhanisch.net) – Operations Research und Machine Learning ([Über mich](https://sebastianhanisch.net/ueber-mich.html)). Mehr zu den Demos: [Interaktive Demos](https://sebastianhanisch.net/demos.html).
+Diese Demo ist Teil des Portfolios von [Sebastian Hanisch](https://sebastianhanisch.net) – Operations Research und Machine Learning ([Über mich](https://sebastianhanisch.net/ueber-mich.html)). Mehr zur Reihe: [Spektren und Wavelets: von Fourier zum Vergleich](https://sebastianhanisch.net/konzepte-spektral-wavelet-analyse.html).
